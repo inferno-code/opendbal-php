@@ -9,6 +9,12 @@
             "name": "inferno-code"
         }
 	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/inferno-code/opendbal-php"
+		}
+    ],
     "require": {
         "php": "^7.0",
         "ext-json": "*",
