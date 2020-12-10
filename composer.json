@@ -1,0 +1,23 @@
+{
+    "name": "inferno-code/opendbal",
+    "type": "library",
+    "description": "OpenDBAL is an alternative for Doctrine DBAL.",
+    "keywords": [ "DBAL", "pdo" ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "inferno-code"
+        }
+	],
+    "require": {
+        "php": "^7.0",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "psr/log": "^1.1"
+    },
+	"autoload": {
+		"psr-4": {
+			"OpenDBAL\\": "src/OpenDBAL/"
+		}
+	}
+}

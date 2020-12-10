@@ -1,0 +1,4 @@
+﻿vendor/
+experiments/
+tests/
+composer.lock
