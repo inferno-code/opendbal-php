@@ -12,7 +12,7 @@ Features:
 Future plans:
 - Unit tests
 - API documentation
-- Add support CSV/TSV data streaming to export/import datasets.
+- Add support CSV/TSV data streaming for exporting/importing datasets.
 
 Introduction
 ============

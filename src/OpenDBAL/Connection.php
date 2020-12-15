@@ -12,7 +12,7 @@ abstract class Connection {
 	protected $log;
 	private $silentMode;
 
-	public function __construct(LoggerInterface $log = null, $silentMode = true) {
+	public function __construct(LoggerInterface $log = null, $silentMode = false) {
 
 		$this->log = $log ?? new NullLogger();
 
@@ -21,7 +21,7 @@ abstract class Connection {
 
 	abstract protected function doQuery(string $sql, array $parameters);
 
-	abstract protected function transactional(callable $callback);
+	abstract public function transactional(callable $callback);
 
 	protected function isSilentMode() {
 

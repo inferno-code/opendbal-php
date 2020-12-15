@@ -20,7 +20,7 @@ class PDOConnection extends Connection {
 
 	protected $pdo = null;
 
-	public function __construct($url, LoggerInterface $log = null, $silentMode = true) {
+	public function __construct($url, LoggerInterface $log = null, $silentMode = false) {
 
 		parent::__construct($log, $silentMode);
 
@@ -84,6 +84,19 @@ class PDOConnection extends Connection {
 
 			}
 		}
+	}
+
+	public function getConnectionResource() {
+
+		if (!$this->isConnected()) {
+
+			$this->connect();
+
+			if (!$this->isConnected())
+				return null;
+		}
+
+		return $this->pdo;
 	}
 
 	private function pgsqlConfigure($url) {
@@ -211,21 +224,14 @@ class PDOConnection extends Connection {
 
 	protected function doQuery(string $sql, array $parameters = []) {
 
-		if (!$this->isConnected()) {
-
-			$this->connect();
-
-			if (!$this->isConnected())
-				return null;
-		}
-
 		try {
 
+			$pdo = $this->getConnectionResource();
+
 			$this->log->debug($sql, $parameters);
-			$stmt = $this->pdo->prepare($sql);
-			if ($stmt->execute($parameters) === true) {
+			$stmt = $pdo->prepare($sql);
+			if ($stmt->execute($parameters) === true)
 				return new PDOStatement($stmt);
-			}
 
 		} catch (Exception $ex) {
 
@@ -235,15 +241,18 @@ class PDOConnection extends Connection {
 				throw $ex;
 		}
 
+		return null;
 	}
 
-	protected function transactional(callable $callback) {
+	public function transactional(callable $callback) {
 
 		$result = null;
 
 		try {
 
-			$this->pdo->beginTransaction();
+			$pdo = $this->getConnectionResource();
+
+			$pdo->beginTransaction();
 
 			$doCommit = false;
 
@@ -258,9 +267,9 @@ class PDOConnection extends Connection {
 			}
 
 			if ($doCommit) {
-				$this->pdo->commit();
+				$pdo->commit();
 			} else {
-				$this->pdo->rollback();
+				$pdo->rollback();
 			}
 
 		} catch (Exception $trEx) {
