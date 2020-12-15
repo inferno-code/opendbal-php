@@ -47,6 +47,17 @@ abstract class Connection {
 		return $result;
 	}
 
+	public function fetchAssoc(string $sql, $parameters = []) {
+
+		$statement = $this->query($sql, $parameters);
+		if ($statement === null)
+			return null;
+
+		$result = $statement->fetchAssoc();
+		$statement->close();
+		return $result;
+	}
+
 	public function fetchObject(string $sql, $parameters = []) {
 
 		$statement = $this->query($sql, $parameters);

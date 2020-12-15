@@ -8,6 +8,7 @@ use OpenDBAL\Connection;
 use \PDO;
 use \Exception;
 use \InvalidArgumentException;
+use \RuntimeException;
 
 use function \parse_url;
 use function \basename;
@@ -233,6 +234,10 @@ class PDOConnection extends Connection {
 			if ($stmt->execute($parameters) === true)
 				return new PDOStatement($stmt);
 
+			$err = $stmt->errorInfo();
+			if ($err[0])
+				throw new RuntimeException("ERROR code: {$err[0]}; message: {$err[2]};");
+
 		} catch (Exception $ex) {
 
 			$this->log->error($ex);
@@ -247,6 +252,7 @@ class PDOConnection extends Connection {
 	public function transactional(callable $callback) {
 
 		$result = null;
+		$exception = null;
 
 		try {
 
@@ -264,6 +270,7 @@ class PDOConnection extends Connection {
 			} catch (Exception $ex) {
 
 				$this->log->error($ex);
+				$exception = $ex;
 			}
 
 			if ($doCommit) {
@@ -279,6 +286,9 @@ class PDOConnection extends Connection {
 			if (!$this->isSilentMode())
 				throw $ex;
 		}
+
+		if ($exception !== null && !$this->isSilentMode())
+			throw $exception;
 
 		return $result;
 	}
